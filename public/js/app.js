@@ -119,6 +119,25 @@ var observer = new IntersectionObserver(function (entries) {
 });
 var target = document.getElementById('shortsSection');
 if (target) observer.observe(target);
+document.addEventListener('DOMContentLoaded', function () {
+  // Event delegation untuk pagination
+  document.body.addEventListener('click', function (e) {
+    if (e.target.closest('.pagination-link')) {
+      e.preventDefault();
+      var url = e.target.closest('.pagination-link').getAttribute('href');
+      fetch(url, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      }).then(function (response) {
+        return response.text();
+      }).then(function (html) {
+        document.querySelector('#articles').innerHTML = html;
+        window.history.pushState({}, '', url);
+      });
+    }
+  });
+});
 
 /***/ })
 

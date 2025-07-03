@@ -92,3 +92,24 @@ const observer = new IntersectionObserver((entries) => {
 
 const target = document.getElementById('shortsSection');
 if (target) observer.observe(target);
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Event delegation untuk pagination
+        document.body.addEventListener('click', function (e) {
+            if (e.target.closest('.pagination-link')) {
+                e.preventDefault();
+                const url = e.target.closest('.pagination-link').getAttribute('href');
+
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    document.querySelector('#articles').innerHTML = html;
+                    window.history.pushState({}, '', url);
+                });
+            }
+        });
+    });
