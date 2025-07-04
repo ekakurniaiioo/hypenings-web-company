@@ -42,7 +42,7 @@
 
                 <!-- Desktop Links -->
                 <div class="hidden md:flex gap-6 items-center">
-                    <a href="/admin/dashboard" class="text-white hover:text-yellow-400 text-lg font-serif">Trending</a>
+                    <a href="#tren" class="text-white hover:text-yellow-400 text-lg font-serif">Trending</a>
                     <a href="#topik" class="text-white hover:text-yellow-400 text-lg font-serif">Topik</a>
                     <a href="#shortsSection" class="text-white hover:text-yellow-400 text-lg font-serif">Shorts</a>
 
@@ -87,7 +87,7 @@
             </div>
     </nav>
 
-    <section class="mt-40 max-w-6xl mx-auto px-4">
+    <section id="tren" class="mt-40 max-w-6xl mx-auto px-4">
         <h2 class="text-3xl font-bold text-white text-center mb-10">Berita Trending</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -425,6 +425,49 @@
             </div>
         </div>
     </section>
+
+    <footer class="bg-black text-white py-10 mt-24 border-t border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
+        <!-- Logo -->
+        <div class="flex items-center gap-2">
+            <img src="{{ asset('image/hype.png') }}" alt="Logo" class="h-12 w-auto">
+            <span class="text-xl font-semibold">Hypenings</span>
+        </div>
+
+        <!-- Sosial Media -->
+        <div class="flex gap-6 text-white">
+            <a href="https://www.instagram.com" target="_blank" class="hover:text-pink-500 transition">
+                <!-- Instagram icon -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M7 4h10a3 3 0 013 3v10a3 3 0 01-3 3H7a3 3 0 01-3-3V7a3 3 0 013-3z" />
+                    <circle cx="12" cy="12" r="3" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.5 6.5h.01" />
+                </svg>
+            </a>
+            <a href="https://www.tiktok.com" target="_blank" class="hover:text-gray-300 transition">
+                <!-- TikTok icon (pakai logo sederhana) -->
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path
+                        d="M14 3a5 5 0 005 5h1v3h-1a8 8 0 01-8-8V3h3zm-3 6v9a3 3 0 11-3-3h1a2 2 0 102 2V9h2z" />
+                </svg>
+            </a>
+            <a href="mailto:hypenings@gmail.com" class="hover:text-red-400 transition">
+                <!-- Email icon -->
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16 12l-4-4-4 4m0 0l4 4 4-4m-4-4v8" />
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="text-center text-gray-500 text-sm mt-6">
+        &copy; 2025 Hypenings. All rights reserved.
+    </div>
+</footer>
+
 
     <script src="{{ asset('js/app.js') }}"></script>
 

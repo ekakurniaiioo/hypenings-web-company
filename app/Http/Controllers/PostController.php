@@ -2,29 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
+use App\Models\Category;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
     public function lifestyle(Request $request)
     {
-        $posts = [
-            [
-                'title' => 'Judul Artikel 1',
-                'content' => 'Deskripsi singkat artikel pertama. Ringkas dan menarik.',
-                'image' => 'image/article1.jpeg',
-                'date' => '3 Juli 2025',
-            ],
-            [
-                'title' => 'Judul Artikel 2',
-                'content' => 'Deskripsi singkat artikel kedua. Singkat dan padat.',
-                'image' => 'image/article2.jpeg',
-                'date' => '2 Juli 2025',
-            ],
-            // Tambah lagi sesuai kebutuhan
-        ];
-
-        return view('lifestyle', compact('posts'));
+        return $this->loadCategory('lifestyle', $request);
     }
-}
 
+    public function music(Request $request)
+    {
+        return $this->loadCategory('music', $request);
+    }
+
+    public function sport(Request $request)
+    {
+        return $this->loadCategory('sport', $request);
+    }
+
+    public function knowledge(Request $request)
+    {
+        return $this->loadCategory('knowledge', $request);
+    }
+
+    public function other(Request $request)
+    {
+        return $this->loadCategory('other', $request);
+    }
+
+    private function loadCategory($categoryName, $request)
+    {
+        $category = Category::where('name', $categoryName)->first();
+
+        if (!$category) {
+            abort(404, 'Kategori tidak ditemukan.');
+        }
+
+        $posts = Article::where('category_id', $category->id)
+                        ->latest()
+                        ->paginate(3);
+
+        if ($request->ajax()) {
+            return view('components.article-list', compact('posts'))->render();
+        }
+
+        return view("categories.$categoryName", compact('posts'));
+    }
+    
+}
