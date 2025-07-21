@@ -3,33 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hypenings</title>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.topology.min.js"></script>
 </head>
 
-<body class="bg-black">
-    <!-- Glowing Animated Background -->
-<div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-    <!-- Kuning -->
-    <div class="absolute w-44 h-44 bg-yellow-400 opacity-20 rounded-full blur-3xl glowing yellow transform: translate(60px, -40px) scale(1.15) rotate(5deg);
-" style="top: 20%; left: 10%"></div>
-
-    <!-- Orange -->
-    <div class="absolute w-36 h-36 bg-orange-400 opacity-20 rounded-full blur-2xl glowing orange" style="top: 60%; left: 70%"></div>
-
-    <!-- Merah -->
-    <div class="absolute w-48 h-48 bg-red-400 opacity-20 rounded-full blur-2xl glowing red" style="top: 40%; left: 30%"></div>
-
-    <!-- Ungu -->
-    <div class="absolute w-32 h-32 bg-purple-500 opacity-20 rounded-full blur-3xl glowing purple" style="top: 75%; left: 20%"></div>
-
-    <!-- Biru -->
-    <div class="absolute w-40 h-40 bg-blue-400 opacity-20 rounded-full blur-2xl glowing blue" style="top: 10%; left: 80%"></div>
-</div>
-
-    <nav class="dark:bg-black border-b border-gray-200 fixed w-full z-50 top-0 h-24">
+<body class="relative bg-[#141414] text-white overflow-x-hidden">
+    <!-- Navbar -->
+    <nav id="navbar"
+        class="border-gray-200 bg-zinc-950 bg-opacity-90 fixed w-full z-50 top-0 h-24 transition-transform duration-500 ease-in-out">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
             <div class="flex justify-between h-16 items-center">
 
@@ -43,434 +27,275 @@
                 <!-- Desktop Links -->
                 <div class="hidden md:flex gap-6 items-center">
                     <a href="#tren" class="text-white hover:text-yellow-400 text-lg font-serif">Trending</a>
-                    <a href="#topik" class="text-white hover:text-yellow-400 text-lg font-serif">Topik</a>
+                    <a href="#topik" class="text-white hover:text-yellow-400 text-lg font-serif">Topic</a>
                     <a href="#shortsSection" class="text-white hover:text-yellow-400 text-lg font-serif">Shorts</a>
 
                     <!-- Dekstop Dropdown -->
                     <div class="relative">
-                        <button id="dropdownButton" class="flex items-center gap-1 text-white hover:text-yellow-400 text-lg font-serif focus:outline-none">
+                        <button id="dropdownButton"
+                            class="flex items-center gap-1 text-white hover:text-yellow-400 text-lg font-serif focus:outline-none">
                             Category
-                            <svg id="dropdownArrow" class="w-4 h-4 transition-transform duration-300 transform" fill="none" stroke="currentColor" stroke-width="2"
-                                viewBox="0 0 24 24">
+                            <svg id="dropdownArrow" class="w-4 h-4 transition-transform duration-300 transform"
+                                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                             </svg>
                         </button>
-
-                        <div id="dropdownMenu" class="absolute hidden flex-col mt-2 bg-black border border-gray-700 rounded-lg py-2 w-44 z-50">
-                            <a href="/lifestyle" class="px-4 py-2 hover:text-yellow-400 text-white text-sm">Lifestyle</a>
-                            <a href="/music" class="px-4 py-2 hover:text-yellow-400 text-white text-sm">Music</a>
-                            <a href="/sport" class="px-4 py-2 hover:text-yellow-400 text-white text-sm">Sport</a>
-                            <a href="/knowledge" class="px-4 py-2 hover:text-yellow-400 text-white text-sm">Knowledge</a>
-                            <a href="/other" class="px-4 py-2 hover:text-yellow-400 text-white text-sm">Other</a>
+                        <div id="dropdownMenu"
+                            class="absolute hidden flex-col mt-2 bg-black border border-gray-700 rounded-lg py-4 w-30 z-50">
+                            @foreach (['lifestyle', 'music', 'sport', 'knowledge', 'other'] as $cat)
+                                @php
+                                    $label = ucfirst($cat);
+                                    $route = session('content_type') === 'shorts'
+                                        ? route('showTopicByCategory', ['name' => $cat])
+                                        : route('category.show', ['name' => $cat]);
+                                @endphp
+                                <a href="{{ $route }}"
+                                    class="px-6 py-2 text-white hover:text-yellow-400 text-sm font-serif">
+                                    {{ $label }}
+                                </a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
 
                 <!-- Mobile hamburger -->
                 <div class="md:hidden">
-                    <button id="mobile-menu-button" class="md:hidden flex flex-col justify-between w-6 h-6 relative z-50">
-                        <span class="hamburger-line absolute top-0 left-0 w-full h-0.5 bg-white transition-all duration-500"></span>
-                        <span class="hamburger-line absolute top-1/2 left-0 w-full h-0.5 bg-white transition-all duration-500 translate-y-[-50%]"></span>
-                        <span class="hamburger-line absolute bottom-0 left-0 w-full h-0.5 bg-white transition-all duration-500"></span>
+                    <button id="mobile-menu-button"
+                        class="md:hidden flex flex-col justify-between w-6 h-6 relative z-50">
+                        <span
+                            class="hamburger-line absolute top-0 left-0 w-full h-0.5 bg-white transition-all duration-500"></span>
+                        <span
+                            class="hamburger-line absolute top-1/2 left-0 w-full h-0.5 bg-white transition-all duration-500 translate-y-[-50%]"></span>
+                        <span
+                            class="hamburger-line absolute bottom-0 left-0 w-full h-0.5 bg-white transition-all duration-500"></span>
                     </button>
                 </div>
             </div>
 
             <!-- Mobile Dropdown -->
-            <div id="mobile-menu" class="transition-all duration-700 ease-in-out hidden max-h-0 overflow-hidden opacity-0 scale-95 transform origin-top p-4 rounded shadow px-4 mt-8 bg-black">
+            <div id="mobile-menu"
+                class="transition-all duration-700 ease-in-out hidden max-h-0 overflow-hidden opacity-0 scale-95 transform origin-top p-4 rounded shadow px-4 mt-8 bg-black">
                 <h2 class="text-3xl text-white my-8">Category</h2>
-                <a href="/lifestyle" class="block py-2 text-white hover:text-yellow-400">Lifestyle</a>
-                <a href="/music" class="block py-2 text-white hover:text-yellow-400">Music</a>
-                <a href="/sport" class="block py-2 text-white hover:text-yellow-400">Sport</a>
-                <a href="/knowledge" class="block py-2 text-white hover:text-yellow-400">Knowledge</a>
-                <a href="/other" class="block py-2 text-white hover:text-yellow-400">Other</a>
+                @foreach (['lifestyle', 'music', 'sport', 'knowledge', 'other'] as $cat)
+                    @php
+                        $label = ucfirst($cat);
+                        $route = session('content_type') === 'shorts'
+                            ? route('showTopicByCategory', ['name' => $cat])
+                            : route('category.show', ['name' => $cat]);
+                    @endphp
+                    <a href="{{ $route }}" class="px-6 py-2 text-white hover:text-yellow-400 text-sm font-serif">
+                        {{ $label }}
+                    </a>
+                @endforeach
             </div>
     </nav>
 
-    <section id="tren" class="mt-40 max-w-6xl mx-auto px-4">
-        <h2 class="text-3xl font-bold text-white text-center mb-10">Berita Trending</h2>
+    <main class="pt-28">
+        <!-- Trending -->
+        <section id="tren" class="pt-12 pb-16">
+            <h2 class="text-3xl font-bold text-center mb-24">Berita Trending</h2>
+            <div
+                class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-6 backdrop-blur-md bg-white/5 rounded-xl border border-white/10 p-6">
+                @foreach($trendingArticles as $a)
+                    <article
+                        class="group bg-white dark:bg-black rounded-2xl shadow-lg overflow-hidden hover:scale-[1.02] transition border dark:border-gray-700">
+                        <div class="relative">
+                            <img src="{{ asset('storage/' . $a->image) }}" alt="{{ $a->title }}"
+                                class="w-full h-78 md:h-60 object-cover object-[center_23%]">
+                            <p
+                                class="absolute top-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded transition-all duration-300 
+                                                                                                  opacity-100 translate-y-0
+                                                                                                  md:opacity-0 md:translate-y-1 
+                                                                                                  group-hover:md:opacity-100 group-hover:md:translate-y-0">
+                                {{ $a->category->name ?? '-' }}
+                            </p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        </div>
+                        <div class="p-4 flex flex-col justify-between h-48">
+                            <div>
+                                <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{{ $a->title }}
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                                    {{ \Str::words(strip_tags($a->content), 22, '...') }}
+                                </p>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <p class="text-sm text-gray-500">{{ $a->published_at->format('F j, Y') }}</p>
+                                <a href="{{ route('articles.show', $a->slug) }}"
+                                    class="text-blue-600 hover:underline text-sm">Baca Selengkapnya →</a>
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        </section>
 
-            <!-- Card 1 -->
-            <article class="rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 transition-all hover:scale-[1.02] duration-300">
-                <img class="w-full h-60 object-cover object-[center_22%]" src="{{ asset('image/article1.jpeg') }}" alt="Article 1">
-                <div class="p-5">
-                    <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Judul Artikel 1</h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                        Ini deskripsi singkat dari artikel pertama.
-                    </p>
-                    <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
+        <!-- Slideshow -->
+        <section class="hidden md:block">
+            <div id="slider" class="relative max-w-7xl mx-auto h-60 md:h-[30vh] overflow-hidden">
+                @foreach($sliderArticles as $a)
+                    <article
+                        class="slide absolute inset-0 bg-cover bg-center transition-opacity duration-1000 opacity-0 pointer-events-none"
+                        style="background-image:url('{{ asset('storage/' . $a->image) }}')">
+                        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                            <div class="text-center max-w-3xl text-white p-4">
+                                <p class="inline-block bg-black px-2 py-1 text-sm mb-2">{{ $a->category->name ?? '-' }}</p>
+                                <a href="{{ route('articles.show', $a->slug) }}">
+                                    <h3 class="text-2xl md:text-4xl font-bold mb-2">
+                                        {{ \Str::words(strip_tags($a->content), 5, '...') }}
+                                    </h3>
+                                </a>
+                                <p class="text-sm">{{ $a->published_at->format('F j, Y') }}</p>
+                            </div>
+                        </div>
+                    </article>
+                @endforeach
+            </div>
+        </section>
+
+        <!-- Topik & Shorts -->
+        <section id="topik" class="pb-16">
+            <h2 class="text-3xl font-bold text-center my-20">Topic</h2>
+
+            @php
+                $topicNames = [
+                    'tech' => 'Teknologi & AI',
+                    'social' => 'Kota & Sosial',
+                    'sport' => 'Olahraga & Hiburan',
+                    'other' => 'Berita Lainnya'
+                ];
+            @endphp
+
+            <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 px-4">
+                <div class="w-full lg:w-2/3 flex flex-col gap-12">
+                    @foreach ($groupedArticles as $key => $articles)
+                        @if($articles->count())
+                            <div>
+                                <div class="flex flex-col gap-8">
+                                    @foreach ($articles as $a)
+                                        <article
+                                            class="flex gap-4 dark:bg-black shadow border dark:border-gray-700 overflow-hidden hover:scale-[1.02] transition h-52 md:h-48">
+                                            <img src="{{ asset('storage/' . $a->image) }}" alt="{{ $a->title }}"
+                                                class="w-1/3 object-cover h-auto">
+                                            <div class="p-4 flex flex-col justify-between flex-1">
+                                                <h4 class="font-semibold text-gray-900 dark:text-white">{{ $a->title }}</h4>
+                                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                                    {{ \Str::words(strip_tags($a->content), 12, '...') }}
+                                                </p>
+                                                <p class="text-sm text-white">
+                                                    {{ $topicNames[$key] ?? ucfirst($key) }}
+                                                </p>
+                                                <div class="flex justify-between items-center text-sm">
+                                                    <p class="text-gray-500">{{ $a->published_at->format('F j, Y') }}</p>
+                                                    <a href="{{ route('articles.show', $a->slug) }}"
+                                                        class="text-blue-600 hover:underline">Baca Selengkapnya →</a>
+                                                </div>
+                                            </div>
+                                        </article>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
                 </div>
-            </article>
 
-            <!-- Card 2 -->
-            <article class="rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 transition-all hover:scale-[1.02] duration-300">
-                <img class="w-full h-60 object-cover object-[center_22%]" src="{{ asset('image/article2.jpeg') }}" alt="Article 2">
-                <div class="p-5">
-                    <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Judul Artikel 2</h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                        Ini deskripsi singkat dari artikel kedua.
-                    </p>
-                    <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
+                <!-- Ranking / Topik di kanan -->
+                <div class="hidden lg:block lg:w-1/3">
+                    <div class="flex flex-col gap-10 backdrop-blur-md bg-white/5 rounded-xl border border-white/10 p-6">
+                        @foreach ($topicArticles as $a)
+                            <div class="flex items-start gap-4 border-b">
+                                <div
+                                    class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full bg-gray-800">
+                                    {{ $loop->iteration }}
+                                </div>
+                                <a href="{{ route('articles.show', $a->slug) }}">
+                                    <p class="text-sm text-white font-medium leading-snug mb-6">
+                                        {{ \Str::limit($a->content, 60) }}
+                                    </p>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-            </article>
+            </div>
+        </section>
+    </main>
 
-            <!-- Card 3 -->
-            <article class="rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 transition-all hover:scale-[1.02] duration-300">
-                <img class="w-full h-60 object-cover object-[center_70%]" src="{{ asset('image/article8.jpeg') }}" alt="Article 2">
-                <div class="p-5">
-                    <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Judul Artikel 3</h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                        Ini deskripsi singkat dari artikel kedua.
-                    </p>
-                    <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
-                </div>
-            </article>
+    <!-- Shorts Carousel -->
+    <section id="shortsSection" class="pb-16 px-8 md:px-40 lg:px-[20vw]">
+        <h2 class="text-3xl font-bold text-center my-16">Shorts</h2>
 
-            <!-- Card 4 -->
-            <article class="rounded-2xl overflow-hidden shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 transition-all hover:scale-[1.02] duration-300">
-                <img class="w-full h-60 object-cover object-[center_22%]" src="{{ asset('image/article4.jpeg') }}" alt="Article 2">
-                <div class="p-5">
-                    <h2 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Judul Artikel 4</h2>
-                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                        Ini deskripsi singkat dari artikel kedua.
-                    </p>
-                    <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
-                </div>
-            </article>
+        <!-- Shorts -->
+        <div class="flex gap-2 mb-4">
+            <button id="prevBtn" class="text-white bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">❮</button>
+            <button id="nextBtn" class="text-white bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">❯</button>
         </div>
-    </section>
-
-    <!-- Slider -->
-    <div id="slider" class="relative max-w-6xl mx-auto mt-12 h-60 md:h-[30vh] overflow-hidden">
-        <!-- Slide 1 -->
-        <article class="slide absolute inset-0 bg-cover bg-[center_30%] transition-opacity duration-1000 opacity-100"
-            style="background-image: url('{{ asset('image/article10.jpeg') }}')">
-            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div class="text-center text-white max-w-3xl px-4 mx-auto">
-                    <p class="bg-black inline-block px-4 py-1 text-sm mb-4">Other</p>
-                    <h2 class="text-2xl md:text-4xl font-bold mb-2">
-                        Uang Membuat Orang Gak Berempati dan Bermoral?
-                    </h2>
-                    <p class="text-sm">August 25, 2023</p>
-                </div>
-            </div>
-        </article>
-
-        <!-- Slide 2 -->
-        <article class="slide absolute inset-0 bg-cover bg-[center_40%] transition-opacity duration-1000 opacity-0"
-            style="background-image: url('{{ asset('image/article9.jpeg') }}')">
-            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div class="text-center text-white max-w-3xl px-4 mx-auto">
-                    <p class="bg-black inline-block px-4 py-1 text-sm mb-4">Other</p>
-                    <h2 class="text-2xl md:text-4xl font-bold mb-2">
-                        Kenapa Kita Cepat Nyerah Waktu Capek?
-                    </h2>
-                    <p class="text-sm">July 1, 2025</p>
-                </div>
-            </div>
-        </article>
-
-        <!-- Slide 3 -->
-        <article class="slide absolute inset-0 bg-cover bg-[center_30%] transition-opacity duration-1000 opacity-0"
-            style="background-image: url('{{ asset('image/article3.jpeg') }}')">
-            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div class="text-center text-white max-w-3xl px-4 mx-auto">
-                    <p class="bg-black inline-block px-4 py-1 text-sm mb-4">Other</p>
-                    <h2 class="text-2xl md:text-4xl font-bold mb-2">
-                        Kenapa Kita Cepat Nyerah Waktu Capek?
-                    </h2>
-                    <p class="text-sm">July 1, 2025</p>
-                </div>
-            </div>
-        </article>
-
-        <!-- Slide 4 -->
-        <article class="slide absolute inset-0 bg-cover bg-[center_40%] transition-opacity duration-1000 opacity-0"
-            style="background-image: url('{{ asset('image/article7.jpeg') }}')">
-            <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div class="text-center text-white max-w-3xl px-4 mx-auto">
-                    <p class="bg-black inline-block px-4 py-1 text-sm mb-4">Other</p>
-                    <h2 class="text-2xl md:text-4xl font-bold mb-2">
-                        Kenapa Kita Cepat Nyerah Waktu Capek?
-                    </h2>
-                    <p class="text-sm">July 1, 2025</p>
-                </div>
-            </div>
-        </article>
-    </div>
-
-    <section id="topik" class="mt-16 mr-32 md:ml-48 px-16">
-        <h2 class="text-3xl font-bold text-center text-white my-24">Topik</h2>
-
-        <div class="flex flex-col mb-8 lg:flex-row gap-32">
-            <!-- Card Artikel -->
-            <div class="w-[70vw] lg:w-1/2">
-                <!-- article1 -->
-                <article class="flex gap-6 overflow-hidden mb-8 shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 hover:scale-[1.02] transition-transform duration-300">
-                    <img class="w-40 md:w-64 h-32 md:h-48 object-cover" src="{{ asset('image/article5.jpeg') }}" alt="Article Image">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Judul Artikel 1</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Deskripsi singkat dari artikel pertama. Ringkas dan menarik.</p>
-                        <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
-                    </div>
-                </article>
-
-                <!-- article2 -->
-                <article class="flex gap-6 overflow-hidden mb-8 shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 hover:scale-[1.02] transition-transform duration-300">
-                    <img class="w-40 md:w-64 h-32 md:h-48 object-cover" src="{{ asset('image/article5.jpeg') }}" alt="Article Image">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Judul Artikel 2</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Deskripsi singkat dari artikel pertama. Ringkas dan menarik.</p>
-                        <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
-                    </div>
-                </article>
-
-                <!-- article3 -->
-                <article class="flex gap-6 overflow-hidden mb-8 shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 hover:scale-[1.02] transition-transform duration-300">
-                    <img class="w-40 md:w-64 h-32 md:h-48 object-cover" src="{{ asset('image/article5.jpeg') }}" alt="Article Image">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Judul Artikel 3</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Deskripsi singkat dari artikel pertama. Ringkas dan menarik.</p>
-                        <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
-                    </div>
-                </article>
-
-                <!-- article4 -->
-                <article class="flex gap-6 overflow-hidden mb-8 shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 hover:scale-[1.02] transition-transform duration-300">
-                    <img class="w-40 md:w-64 h-32 md:h-48 object-cover" src="{{ asset('image/article5.jpeg') }}" alt="Article Image">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Judul Artikel 4</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Deskripsi singkat dari artikel pertama. Ringkas dan menarik.</p>
-                        <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
-                    </div>
-                </article>
-
-                <!-- article5 -->
-                <article class="flex gap-6 overflow-hidden mb-8 shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 hover:scale-[1.02] transition-transform duration-300">
-                    <img class="w-40 md:w-64 h-32 md:h-48 object-cover" src="{{ asset('image/article5.jpeg') }}" alt="Article Image">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Judul Artikel 5</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Deskripsi singkat dari artikel pertama. Ringkas dan menarik.</p>
-                        <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
-                    </div>
-                </article>
-
-                <!-- article6 -->
-                <article class="flex gap-6 overflow-hidden mb-8 shadow-lg bg-white dark:bg-black border border-gray-200 dark:border-gray-700 hover:scale-[1.02] transition-transform duration-300">
-                    <img class="w-40 md:w-64 h-32 md:h-48 object-cover" src="{{ asset('image/article5.jpeg') }}" alt="Article Image">
-                    <div class="p-4">
-                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Judul Artikel 6</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">Deskripsi singkat dari artikel pertama. Ringkas dan menarik.</p>
-                        <a href="#" class="text-blue-600 hover:underline text-sm font-medium">Baca Selengkapnya →</a>
-                    </div>
-                </article>
-            </div>
-
-            <!-- Ranking / Topik di kanan -->
-            <div class="w-[70vw] hidden md:flex mt-8 lg:w-1/3">
-
-                <!-- List Nomor & Judul -->
-                <div class="flex flex-col gap-14">
-                    <!-- Topik 1 -->
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full" style="background: radial-gradient(circle,rgba(251, 248, 63, 1) 3%, rgba(0, 0, 0, 1) 69%);
-                          ">1</div>
-                        <p class="text-sm text-white font-medium leading-snug">Respons Menteri ESDM Bahlil soal Kapal JKW dan Dewi...</p>
-                    </div>
-
-                    <!-- Topik 2 -->
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full" style="background: radial-gradient(circle,rgba(251, 248, 63, 1) 3%, rgba(0, 0, 0, 1) 69%);
-                           ">2</div>
-                        <p class="text-sm text-white font-medium leading-snug">Fakta Tambang Nikel Raja Ampat, Begini Kumpulan...</p>
-                    </div>
-
-                    <!-- Topik 3 -->
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full" style="background: radial-gradient(circle,rgba(251, 248, 63, 1) 3%, rgba(0, 0, 0, 1) 69%);
-                           ">3</div>
-                        <p class="text-sm text-white font-medium leading-snug">Komentar Ketum PSSI Erick Thohir usai Timnas Indone...</p>
-                    </div>
-
-                    <!-- Topik 4 -->
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full" style="background: radial-gradient(circle,rgba(251, 248, 63, 1) 3%, rgba(0, 0, 0, 1) 69%);
-                           ">4</div>
-                        <p class="text-sm text-white font-medium leading-snug">Respons Menteri ESDM Bahlil soal Kapal JKW dan Dewi...</p>
-                    </div>
-
-                    <!-- Topik 5 -->
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full" style="background: radial-gradient(circle,rgba(251, 248, 63, 1) 3%, rgba(0, 0, 0, 1) 69%);
-                           ">5</div>
-                        <p class="text-sm text-white font-medium leading-snug">Fakta Tambang Nikel Raja Ampat, Begini Kumpulan...</p>
-                    </div>
-
-                    <!-- Topik 6 -->
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full" style="background: radial-gradient(circle,rgba(251, 248, 63, 1) 3%, rgba(0, 0, 0, 1) 69%);
-                           ">6</div>
-                        <p class="text-sm text-white font-medium leading-snug">Komentar Ketum PSSI Erick Thohir usai Timnas Indone...</p>
-                    </div>
-
-                    <!-- Topik 7 -->
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full" style="background: radial-gradient(circle,rgba(251, 248, 63, 1) 3%, rgba(0, 0, 0, 1) 69%);
-                           ">7</div>
-                        <p class="text-sm text-white font-medium leading-snug">Respons Menteri ESDM Bahlil soal Kapal JKW dan Dewi...</p>
-                    </div>
-
-                    <!-- Topik 8 -->
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full" style="background: radial-gradient(circle,rgba(251, 248, 63, 1) 3%, rgba(0, 0, 0, 1) 69%);
-                           ">8</div>
-                        <p class="text-sm text-white font-medium leading-snug">Fakta Tambang Nikel Raja Ampat, Begini Kumpulan...</p>
-                    </div>
-
-                    <!-- Topik 9 -->
-                    <div class="flex items-start gap-4">
-                        <div class="w-10 h-10 text-white flex items-center justify-center font-bold rounded-full" style="background: radial-gradient(circle,rgba(251, 248, 63, 1) 3%, rgba(0, 0, 0, 1) 69%);
-                           ">9</div>
-                        <p class="text-sm text-white font-medium leading-snug">Komentar Ketum PSSI Erick Thohir usai Timnas Indone...</p>
-                    </div>
-                </div>
-            </div>
-    </section>
-
-    <section id="shortsSection" class="mt-32 max-w-6xl mx-auto px-4 opacity-0 translate-x-10 transition-all duration-700">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-3xl font-bold text-white">Shorts</h2>
-            <!-- Shorts -->
-            <div class="flex gap-2">
-                <button id="prevBtn" class="text-white bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">❮</button>
-                <button id="nextBtn" class="text-white bg-gray-700 px-3 py-1 rounded hover:bg-gray-600">❯</button>
-            </div>
         </div>
 
         <div id="sliderContainer" class="flex gap-6 overflow-x-scroll scrollbar-hide scroll-smooth snap-x">
-            <div class="w-40 h-40 rounded-full bg-yellow-400 opacity-30 blur-2xl animate-pulse-move"></div>
-
-            <!-- card 1 -->
-            <div class="min-w-[200px] max-w-sm snap-start flex-shrink-0 bg-white dark:bg-black rounded-xl shadow border dark:border-gray-700">
-                <img src="{{ asset('image/article2.jpeg') }}" class="w-full h-48 object-cover rounded-t-xl" alt="">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Judul Artikel 1</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Deskripsi artikel singkat.</p>
+            @foreach ($shorts as $short)
+                <div
+                    class="min-w-[200px] max-w-sm snap-start flex-shrink-0 bg-white dark:bg-black rounded-xl shadow border dark:border-gray-700">
+                    <a href="{{ route('articles.shortshow', $short->slug) }}">
+                        <img src="{{ asset('storage/' . $short->image) }}" class="w-full h-48 object-cover rounded-t-xl"
+                            alt="{{ $short->title }}">
+                    </a>
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{ $short->title }}</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            {{ \Str::words(strip_tags($short->content), 12, '...') }}
+                        </p>
+                    </div>
                 </div>
-            </div>
+            @endforeach
 
-            <!-- card 2 -->
-            <div class="min-w-[200px] max-w-sm snap-start flex-shrink-0 bg-white dark:bg-black rounded-xl shadow border dark:border-gray-700">
-                <img src="{{ asset('image/article2.jpeg') }}" class="w-full h-48 object-cover rounded-t-xl" alt="">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Judul Artikel 2</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Deskripsi artikel singkat.</p>
-                </div>
-            </div>
-
-            <!-- card 3 -->
-            <div class="min-w-[200px] max-w-sm snap-start flex-shrink-0 bg-white dark:bg-black rounded-xl shadow border dark:border-gray-700">
-                <img src="{{ asset('image/article2.jpeg') }}" class="w-full h-48 object-cover rounded-t-xl" alt="">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Judul Artikel 3</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Deskripsi artikel singkat.</p>
-                </div>
-            </div>
-
-            <!-- card 4 -->
-            <div class="min-w-[200px] max-w-sm snap-start flex-shrink-0 bg-white dark:bg-black rounded-xl shadow border dark:border-gray-700">
-                <img src="{{ asset('image/article2.jpeg') }}" class="w-full h-48 object-cover rounded-t-xl" alt="">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Judul Artikel 4</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Deskripsi artikel singkat.</p>
-                </div>
-            </div>
-
-            <!-- card 5 -->
-            <div class="min-w-[200px] max-w-sm snap-start flex-shrink-0 bg-white dark:bg-black rounded-xl shadow border dark:border-gray-700">
-                <img src="{{ asset('image/article2.jpeg') }}" class="w-full h-48 object-cover rounded-t-xl" alt="">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Judul Artikel 5</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Deskripsi artikel singkat.</p>
-                </div>
-            </div>
-
-            <!-- card 6 -->
-            <div class="min-w-[200px] max-w-sm snap-start flex-shrink-0 bg-white dark:bg-black rounded-xl shadow border dark:border-gray-700">
-                <img src="{{ asset('image/article2.jpeg') }}" class="w-full h-48 object-cover rounded-t-xl" alt="">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Judul Artikel 6</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Deskripsi artikel singkat.</p>
-                </div>
-            </div>
-
-            <!-- card 7 -->
-            <div class="min-w-[200px] max-w-sm snap-start flex-shrink-0 bg-white dark:bg-black rounded-xl shadow border dark:border-gray-700">
-                <img src="{{ asset('image/article2.jpeg') }}" class="w-full h-48 object-cover rounded-t-xl" alt="">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Judul Artikel 7</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Deskripsi artikel singkat.</p>
-                </div>
-            </div>
-
-            <!-- card 8 -->
-            <div class="min-w-[200px] max-w-sm snap-start flex-shrink-0 bg-white dark:bg-black rounded-xl shadow border dark:border-gray-700">
-                <img src="{{ asset('image/article2.jpeg') }}" class="w-full h-48 object-cover rounded-t-xl" alt="">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Judul Artikel 8</h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">Deskripsi artikel singkat.</p>
-                </div>
-            </div>
         </div>
     </section>
 
+    </main>
+
     <footer class="bg-black text-white py-10 mt-24 border-t border-gray-700">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-        <!-- Logo -->
-        <div class="flex items-center gap-2">
-            <img src="{{ asset('image/hype.png') }}" alt="Logo" class="h-12 w-auto">
-            <span class="text-xl font-semibold">Hypenings</span>
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <img src="{{ asset('image/hype.png') }}" alt="Logo" class="h-12 w-auto">
+                <span class="text-xl font-semibold">Hypenings</span>
+            </div>
+
+            <!-- Sosial Media -->
+            <div class="flex gap-6 text-white">
+                <a href="https://www.instagram.com/hypenings/?hl=en" target="_blank"
+                    class="hover:text-pink-500 transition">
+                    <!-- Instagram icon -->
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M7 4h10a3 3 0 013 3v10a3 3 0 01-3 3H7a3 3 0 01-3-3V7a3 3 0 013-3z" />
+                        <circle cx="12" cy="12" r="3" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.5 6.5h.01" />
+                    </svg>
+                </a>
+                <a href="https://www.tiktok.com/@hypenings" target="_blank" class="hover:text-gray-300 transition">
+                    <!-- TikTok icon (pakai logo sederhana) -->
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14 3a5 5 0 005 5h1v3h-1a8 8 0 01-8-8V3h3zm-3 6v9a3 3 0 11-3-3h1a2 2 0 102 2V9h2z" />
+                    </svg>
+                </a>
+                <a href="mailto:senidalamhidupSDH@gmail.com" class="hover:text-red-400 transition">
+                    <!-- Email icon -->
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 12l-4-4-4 4m0 0l4 4 4-4m-4-4v8" />
+                    </svg>
+                </a>
+            </div>
         </div>
 
-        <!-- Sosial Media -->
-        <div class="flex gap-6 text-white">
-            <a href="https://www.instagram.com" target="_blank" class="hover:text-pink-500 transition">
-                <!-- Instagram icon -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M7 4h10a3 3 0 013 3v10a3 3 0 01-3 3H7a3 3 0 01-3-3V7a3 3 0 013-3z" />
-                    <circle cx="12" cy="12" r="3" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.5 6.5h.01" />
-                </svg>
-            </a>
-            <a href="https://www.tiktok.com" target="_blank" class="hover:text-gray-300 transition">
-                <!-- TikTok icon (pakai logo sederhana) -->
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M14 3a5 5 0 005 5h1v3h-1a8 8 0 01-8-8V3h3zm-3 6v9a3 3 0 11-3-3h1a2 2 0 102 2V9h2z" />
-                </svg>
-            </a>
-            <a href="mailto:hypenings@gmail.com" class="hover:text-red-400 transition">
-                <!-- Email icon -->
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M16 12l-4-4-4 4m0 0l4 4 4-4m-4-4v8" />
-                </svg>
-            </a>
+        <!-- Copyright -->
+        <div class="text-center text-gray-500 text-sm mt-6">
+            &copy; 2025 Hypenings. All rights reserved.
         </div>
-    </div>
-
-    <!-- Copyright -->
-    <div class="text-center text-gray-500 text-sm mt-6">
-        &copy; 2025 Hypenings. All rights reserved.
-    </div>
-</footer>
-
+    </footer>
 
     <script src="{{ asset('js/app.js') }}"></script>
-
 </body>
 
 </html>

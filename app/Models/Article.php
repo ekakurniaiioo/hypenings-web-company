@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Article extends Model
 {
+    protected $table = 'articles';
     protected $fillable = [
         'title',
         'slug',
@@ -21,4 +22,14 @@ class Article extends Model
         return $this->belongsTo(Category::class);
 
     }
+public function slider()
+{
+    return $this->hasOne(Slider::class);
+}
+public function scopeSlider($query)
+{
+    return $query->where('is_features_slider', true);
+}
+
+
 }

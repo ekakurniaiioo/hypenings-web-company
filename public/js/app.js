@@ -35,108 +35,158 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (() => {
 
 document.addEventListener("DOMContentLoaded", function () {
+  // === MOBILE MENU ===
   var btn = document.getElementById("mobile-menu-button");
   var menu = document.getElementById("mobile-menu");
+  if (!btn || !menu) return;
   var isOpen = false;
   btn.addEventListener("click", function () {
-    btn.classList.toggle("hamburger-active");
     if (!isOpen) {
       menu.classList.remove("hidden");
-      setTimeout(function () {
+      requestAnimationFrame(function () {
         menu.classList.remove("opacity-0", "scale-95", "max-h-0");
         menu.classList.add("opacity-100", "scale-100", "max-h-[500px]");
-      }, 10);
+      });
     } else {
       menu.classList.remove("opacity-100", "scale-100", "max-h-[500px]");
       menu.classList.add("opacity-0", "scale-95", "max-h-0");
       setTimeout(function () {
         menu.classList.add("hidden");
-      }, 400); // ← bisa diganti biar lebih lama
+      }, 300);
     }
     isOpen = !isOpen;
   });
-});
-document.addEventListener("DOMContentLoaded", function () {
   var slides = document.querySelectorAll("#slider .slide");
   var current = 0;
   function showSlide(index) {
     slides.forEach(function (slide, i) {
-      slide.classList.remove("opacity-100");
-      slide.classList.add("opacity-0");
       if (i === index) {
-        slide.classList.remove("opacity-0");
-        slide.classList.add("opacity-100");
+        slide.classList.add("opacity-100", "pointer-events-auto");
+        slide.classList.remove("opacity-0", "pointer-events-none");
+      } else {
+        slide.classList.remove("opacity-100", "pointer-events-auto");
+        slide.classList.add("opacity-0", "pointer-events-none");
       }
     });
   }
-  setInterval(function () {
-    current = (current + 1) % slides.length;
+  if (slides.length > 0) {
     showSlide(current);
-  }, 5000); // Ganti tiap 5 detik
-});
-var button = document.getElementById("dropdownButton");
-var menu = document.getElementById("dropdownMenu");
-var arrow = document.getElementById("dropdownArrow");
-var isOpen = false;
-button.addEventListener("click", function () {
-  isOpen = !isOpen;
-  menu.classList.toggle("hidden");
-  arrow.classList.toggle("rotate-180");
-});
-
-// Optional: klik di luar untuk menutup dropdown
-document.addEventListener("click", function (e) {
-  if (!button.contains(e.target) && !menu.contains(e.target)) {
-    menu.classList.add("hidden");
-    arrow.classList.remove("rotate-180");
-    isOpen = false;
+    setInterval(function () {
+      current = (current + 1) % slides.length;
+      showSlide(current);
+    }, 5000);
   }
-});
-var slider = document.getElementById('sliderContainer');
-var nextBtn = document.getElementById('nextBtn');
-var prevBtn = document.getElementById('prevBtn');
-nextBtn.addEventListener('click', function () {
-  slider.scrollBy({
-    left: 320,
-    behavior: 'smooth'
-  });
-});
-prevBtn.addEventListener('click', function () {
-  slider.scrollBy({
-    left: -320,
-    behavior: 'smooth'
-  });
-});
-var observer = new IntersectionObserver(function (entries) {
-  entries.forEach(function (entry) {
-    if (entry.isIntersecting) {
-      entry.target.classList.remove('opacity-0', 'translate-x-10');
-      entry.target.classList.add('opacity-100', 'translate-x-0');
-    }
-  });
-}, {
-  threshold: 0.2
-});
-var target = document.getElementById('shortsSection');
-if (target) observer.observe(target);
-document.addEventListener('DOMContentLoaded', function () {
-  // Event delegation untuk pagination
-  document.body.addEventListener('click', function (e) {
-    if (e.target.closest('.pagination-link')) {
+  console.log("Slider JS aktif, jumlah slide:", slides.length);
+
+  // === DROPDOWN ===
+  var button = document.getElementById("dropdownButton");
+  var menuDropdown = document.getElementById("dropdownMenu");
+  var arrow = document.getElementById("dropdownArrow");
+  if (button && menuDropdown && arrow) {
+    button.addEventListener("click", function () {
+      isOpen = !isOpen;
+      menuDropdown.classList.toggle("hidden");
+      arrow.classList.toggle("rotate-180");
+    });
+    document.addEventListener("click", function (e) {
+      if (!button.contains(e.target) && !menuDropdown.contains(e.target)) {
+        menuDropdown.classList.add("hidden");
+        arrow.classList.remove("rotate-180");
+        isOpen = false;
+      }
+    });
+  }
+
+  // === SLIDER SCROLL ===
+  var slider = document.getElementById("sliderContainer");
+  var nextBtn = document.getElementById("nextBtn");
+  var prevBtn = document.getElementById("prevBtn");
+  if (slider && nextBtn && prevBtn) {
+    nextBtn.addEventListener("click", function () {
+      slider.scrollBy({
+        left: 320,
+        behavior: "smooth"
+      });
+    });
+    prevBtn.addEventListener("click", function () {
+      slider.scrollBy({
+        left: -320,
+        behavior: "smooth"
+      });
+    });
+  }
+
+  // === PAGINATION ===
+  document.body.addEventListener("click", function (e) {
+    if (e.target.closest(".pagination-link")) {
       e.preventDefault();
-      var url = e.target.closest('.pagination-link').getAttribute('href');
-      fetch(url, {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
-      }).then(function (response) {
-        return response.text();
+      var url = e.target.closest(".pagination-link").getAttribute("href");
+      fetch(url).then(function (res) {
+        return res.text();
       }).then(function (html) {
-        document.querySelector('#articles').innerHTML = html;
-        window.history.pushState({}, '', url);
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, "text/html");
+        var newContent = doc.querySelector("#article-container");
+
+        // Ganti konten, BUKAN ditambah
+        document.querySelector("#article-container").innerHTML = newContent.innerHTML;
+
+        // Scroll to top (opsional)
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
       });
     }
   });
+
+  // === INTERSECTION OBSERVER ===
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.remove("opacity-0", "translate-x-10");
+        entry.target.classList.add("opacity-100", "translate-x-0");
+      }
+    });
+  }, {
+    threshold: 0.2
+  });
+  var target = document.getElementById("shortsSection");
+  if (target) observer.observe(target);
+
+  // === NAVBAR SHOW/HIDE ON SCROLL ===
+  var lastScrollTop = 0;
+  var navbar = document.getElementById("navbar");
+  if (navbar) {
+    window.addEventListener("scroll", function () {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      navbar.style.transform = scrollTop > lastScrollTop ? "translateY(-100%)" : "translateY(0)";
+      lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    });
+  }
+
+  // === SHORTS SLIDER CUSTOM ===
+  var shortsSlider = document.getElementById("sliderWrapper");
+  var shortsSlides = shortsSlider ? shortsSlider.children : [];
+  var totalSlides = shortsSlides.length;
+  var currentIndex = 0;
+  var nextSlideBtn = document.getElementById("nextSlide");
+  var prevSlideBtn = document.getElementById("prevSlide");
+  if (shortsSlider && nextSlideBtn && prevSlideBtn) {
+    nextSlideBtn.addEventListener("click", function () {
+      currentIndex = currentIndex < totalSlides - 1 ? currentIndex + 1 : 0;
+      updateShortsSlider();
+    });
+    prevSlideBtn.addEventListener("click", function () {
+      currentIndex = currentIndex > 0 ? currentIndex - 1 : totalSlides - 1;
+      updateShortsSlider();
+    });
+  }
+  function updateShortsSlider() {
+    if (totalSlides === 0) return;
+    var width = shortsSlides[0].clientWidth;
+    shortsSlider.style.transform = "translateX(-".concat(width * currentIndex, "px)");
+  }
 });
 
 /***/ })

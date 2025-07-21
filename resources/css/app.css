@@ -15,14 +15,16 @@
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.scrollbar-hide {
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
+body {
+  background-repeat: repeat;
+  background-size: contain;
 }
 
 @keyframes float-random-1 {
@@ -50,12 +52,6 @@
   50% { transform: translate(40px, -35px) scale(1.15); }
 }
 
-/* Percepat sedikit durasinya */
-.glowing.yellow { animation: float-random-1 8s ease-in-out infinite alternate; }
-.glowing.orange { animation: float-random-2 7s ease-in-out infinite alternate; }
-.glowing.red    { animation: float-random-3 6s ease-in-out infinite alternate; }
-.glowing.purple { animation: float-random-4 9s ease-in-out infinite alternate; }
-.glowing.blue   { animation: float-random-5 7.5s ease-in-out infinite alternate; }
 
 
 

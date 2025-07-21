@@ -1,23 +1,34 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\ArticleController;
 
-Route::get('/', function () {
-    return view('hypenings');
-});
+Route::get('/', [ArticleController::class, 'index'])->name('articles.index');
 
-Route::get('/home', function () {
-    return view('hypenings');
-});
+Route::get('/home', [ArticleController::class, 'index'])->name('articles.index');
 
-Route::get('/lifestyle', [PostController::class, 'lifestyle'])->name('lifestyle');
+Route::get('/category/{name}', [ArticleController::class, 'showCategory'])->name('category.show');
 
-Route::get('/music', [PostController::class, 'music'])->name('music');
+Route::get('/shorts/category/{name}', function ($name) {
+    session(['content_type' => 'shorts']);
+    return redirect()->route('category.show', ['name' => $name]);
+})->name('showShortsByCategory');
 
-Route::get('/sport', [PostController::class, 'sport'])->name('sport');
+Route::get('/topic/category/{name}', function ($name) {
+    session(['content_type' => 'article']);
+    return redirect()->route('category.show', ['name' => $name]);
+})->name('showTopicByCategory');
 
-Route::get('/knowledge', [PostController::class, 'knowledge'])->name('knowledge');
+Route::get('/artikel', [ArticleController::class, 'index'])->name('artikel.index');
 
-Route::get('/other', [PostController::class, 'other'])->name('other');
+Route::get('/articles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
+
+Route::get('/shorts/{slug}', [ArticleController::class, 'shortShow'])->name('articles.shortshow');
+
+Route::get('/article', [ArticleController::class, 'showTopic'])->name('showTopic');
+
+Route::get('/shorts', [ArticleController::class, 'showShorts'])->name('showShorts');
+
+
+
 
