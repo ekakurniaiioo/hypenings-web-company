@@ -41,9 +41,7 @@ class PostController extends Controller
             abort(404, 'Kategori tidak ditemukan.');
         }
 
-        $posts = Article::where('category_id', $category->id)
-                        ->latest()
-                        ->paginate(3);
+        $posts = Article::where('category_id', $category->id)->paginate(4);
 
         if ($request->ajax()) {
             return view('components.article-list', compact('posts'))->render();
@@ -51,5 +49,5 @@ class PostController extends Controller
 
         return view("categories.$categoryName", compact('posts'));
     }
-    
+
 }

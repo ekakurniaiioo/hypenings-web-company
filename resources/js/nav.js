@@ -5,17 +5,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!btn || !menu) return;
 
-    let isOpen = false;
+    let isMobileMenuOpen = false;
 
     btn.addEventListener("click", () => {
-        if (!isOpen) {
+        if (!isMobileMenuOpen) {
             menu.classList.remove("hidden");
             requestAnimationFrame(() => {
                 menu.classList.remove("opacity-0", "scale-95", "max-h-0");
-                menu.classList.add("opacity-100", "scale-100", "max-h-[500px]");
+                menu.classList.add("opacity-100", "scale-100", "max-h-96");
             });
         } else {
-            menu.classList.remove("opacity-100", "scale-100", "max-h-[500px]");
+            menu.classList.remove("opacity-100", "scale-100", "max-h-96");
             menu.classList.add("opacity-0", "scale-95", "max-h-0");
 
             setTimeout(() => {
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 300);
         }
 
-        isOpen = !isOpen;
+        isMobileMenuOpen = !isMobileMenuOpen;
     });
 
     const slides = document.querySelectorAll("#slider .slide");
@@ -46,15 +46,48 @@ document.addEventListener("DOMContentLoaded", () => {
         setInterval(() => {
             current = (current + 1) % slides.length;
             showSlide(current);
-        }, 5000);
+        }, 8000);
     }
 
     console.log("Slider JS aktif, jumlah slide:", slides.length);
 
-    // === DROPDOWN ===
+    function setupDropdown(buttonId, menuId, arrowId) {
+        const btn = document.getElementById(buttonId);
+        const menu = document.getElementById(menuId);
+        const arrow = document.getElementById(arrowId);
+
+        if (btn && menu && arrow) {
+            btn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                menu.classList.toggle("hidden");
+                arrow.classList.toggle("rotate-180");
+            });
+
+            document.addEventListener("click", function (e) {
+                if (!btn.contains(e.target) && !menu.contains(e.target)) {
+                    menu.classList.add("hidden");
+                    arrow.classList.remove("rotate-180");
+                }
+            });
+        }
+    }
+
+    setupDropdown(
+        "desktopContentTypeButton",
+        "desktopContentTypeMenu",
+        "desktopContentTypeArrow"
+    );
+    setupDropdown(
+        "mobileContentTypeButton",
+        "mobileContentTypeMenu",
+        "mobileContentTypeArrow"
+    );
+
     const button = document.getElementById("dropdownButton");
     const menuDropdown = document.getElementById("dropdownMenu");
     const arrow = document.getElementById("dropdownArrow");
+
+    let isOpen = false; // <- Tambahan penting!
 
     if (button && menuDropdown && arrow) {
         button.addEventListener("click", () => {
@@ -116,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // === INTERSECTION OBSERVER ===
-    const observer = new IntersectionObserver(
+    const shortsObserver = new IntersectionObserver(
         (entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
@@ -134,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     const target = document.getElementById("shortsSection");
-    if (target) observer.observe(target);
+    if (target) shortsObserver.observe(target);
 
     // === NAVBAR SHOW/HIDE ON SCROLL ===
     let lastScrollTop = 0;
@@ -179,5 +212,40 @@ document.addEventListener("DOMContentLoaded", () => {
         if (totalSlides === 0) return;
         const width = shortsSlides[0].clientWidth;
         shortsSlider.style.transform = `translateX(-${width * currentIndex}px)`;
+    }
+
+    let page = 2;
+    let loading = false;
+
+    document
+        .getElementById("loadMoreArticlesButton")
+        .addEventListener("click", function () {
+            loadMoreArticles(); 
+        });
+
+    async function loadMoreArticles() {
+        if (loading) return;
+        loading = true;
+
+        const res = await fetch(`/articles/topic/load-more?page=${page}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector(
+                    'meta[name="csrf-token"]'
+                ).content,
+            },
+            body: JSON.stringify({
+                exclude_ids: shownArticleIds,
+            }),
+        });
+
+        const html = await res.text();
+        document
+            .querySelector("#moreArticlesWrapper")
+            .insertAdjacentHTML("beforeend", html);
+
+        page++;
+        loading = false;
     }
 });

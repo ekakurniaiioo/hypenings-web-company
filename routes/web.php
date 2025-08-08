@@ -19,15 +19,32 @@ Route::get('/topic/category/{name}', function ($name) {
     return redirect()->route('category.show', ['name' => $name]);
 })->name('showTopicByCategory');
 
+Route::get('/set-content-type/{type}', function ($type) {
+    if (in_array($type, ['article', 'shorts'])) {
+        session(['content_type' => $type]);
+
+        if ($type === 'article') {
+            return redirect()->route('showTopic');
+        } else {
+            return redirect()->route('showShorts');
+        }
+    }
+
+    return redirect()->back();
+})->name('setContentType');
+
+Route::get('/articles/load-more', [ArticleController::class, 'loadMore']);
+
+Route::get('/shorts', [ArticleController::class, 'showShorts'])->name('showShorts');
+
+Route::get('/topic', [ArticleController::class, 'showTopic'])->name('showTopic');
+
 Route::get('/artikel', [ArticleController::class, 'index'])->name('artikel.index');
 
 Route::get('/articles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 Route::get('/shorts/{slug}', [ArticleController::class, 'shortShow'])->name('articles.shortshow');
 
-Route::get('/article', [ArticleController::class, 'showTopic'])->name('showTopic');
-
-Route::get('/shorts', [ArticleController::class, 'showShorts'])->name('showShorts');
 
 
 

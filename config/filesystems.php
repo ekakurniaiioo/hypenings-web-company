@@ -2,7 +2,7 @@
 
 return [
 
-    'default' => env('FILESYSTEM_DRIVER', 'local'),
+    'default' => env('FILESYSTEM_DRIVER', 'public'), // <- pastiin pakai 'public'
 
     'disks' => [
 
@@ -13,7 +13,7 @@ return [
 
         'public' => [
             'driver' => 'local',
-            'root' => '/Users/dickey/Documents/hypenings-uploads',
+            'root' => public_path('storage'),
             'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
@@ -31,9 +31,8 @@ return [
 
     ],
 
-'links' => [
-    public_path('storage') => '/Users/dickey/Documents/hypenings-uploads',
-],
-
+    'links' => [
+        public_path('storage') => storage_path('app/public'),
+    ],
 
 ];
