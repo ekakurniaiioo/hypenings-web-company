@@ -11,34 +11,37 @@ class ArticleController extends Controller
     // === Home Page ===
     public function index()
     {
-
-        $topArticles = Article::where('is_topic', true)
-            ->where('is_shorts', false)
+        // Artikel trending 
+        $trendingArticles = Article::where('is_trending', true)
+            ->where('is_featured_slider', false)
+            ->orderBy('published_at', 'desc')
             ->latest()
             ->take(4)
             ->get();
 
         // Artikel slider
         $sliderArticles = Article::where('is_featured_slider', true)
+            ->orderBy('published_at', 'desc')
             ->latest()
             ->take(4)
             ->get();
 
-        // Artikel trending (tapi bukan slider)
-        $trendingArticles = Article::where('is_trending', true)
-            ->where('is_featured_slider', false)
-            ->latest()
-            ->take(4)
+        // Artikel topik bagian tengah 
+        $topArticles = Article::where('is_topic', true)
+            ->where('is_shorts', false)
+            ->orderBy('published_at', 'desc')
+            ->take(5)
             ->get();
 
-        // Artikel topik untuk bagian tengah 
         $topicArticles = Article::where('is_topic', true)
+            ->orderBy('published_at', 'desc')
             ->latest()
-            ->take(8)
+            ->take(5)
             ->get();
 
         // Shorts
         $shorts = Article::where('is_shorts', true)
+            ->orderBy('published_at', 'desc')
             ->latest()
             ->take(10)
             ->get();
@@ -52,6 +55,34 @@ class ArticleController extends Controller
         ));
     }
 
+    // Artikel topik bagian bawah
+    public function loadMore(Request $request)
+    {
+        $offset = $request->input('offset', 0);
+        $limit = 5;
+
+        $articles = Article::where('is_topic', true)
+            ->where('is_shorts', false)
+            ->orderBy('published_at', 'desc')
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        if ($articles->isEmpty()) {
+            return response()->json([
+                'html' => '',
+                'hasMore' => false
+            ]);
+        }
+
+        $html = view('partials.article-card-list', compact('articles'))->render();
+
+        return response()->json([
+            'html' => $html,
+            'hasMore' => true
+        ]);
+    }
+
     // === Artikel Detail ===
     public function show($slug)
     {
@@ -60,17 +91,23 @@ class ArticleController extends Controller
 
         $articles = Article::where('id', '!=', $article->id)
             ->where('is_shorts', false)
-            ->inRandomOrder()
+            ->orderBy('published_at', 'desc')
             ->take(8)
             ->get();
 
         $topicArticles = Article::where('is_topic', true)
-            ->latest()
+            ->orderBy('published_at', 'desc')
             ->take(8)
             ->get();
 
         session(['content_type' => 'article']);
 
+        $sessionKey = 'article_viewed_' . $article->id;
+    
+        if (!session()->has($sessionKey)) {
+            $article->increment('views');
+            session()->put($sessionKey, true);
+        }
         return view('articles.show', compact('article', 'mediaItems', 'articles', 'topicArticles'));
     }
 
@@ -81,7 +118,7 @@ class ArticleController extends Controller
 
         $moreShorts = Article::where('is_shorts', true)
             ->where('id', '!=', $short->id)
-            ->latest()
+            ->orderBy('published_at', 'desc')
             ->take(4)
             ->get();
 
@@ -126,8 +163,8 @@ class ArticleController extends Controller
         if ($isShortsOnly) {
             $shorts = Article::where('category_id', $category->id)
                 ->where('is_shorts', true)
-                ->latest()
-                ->paginate(5);
+                ->orderBy('published_at', 'desc')
+                ->paginate(4);
 
             $articles = collect();
 
@@ -136,27 +173,15 @@ class ArticleController extends Controller
 
         $articles = Article::where('category_id', $category->id)
             ->where('is_shorts', false)
-            ->latest()
+            ->orderBy('published_at', 'desc')
             ->paginate(4);
 
         $shorts = Article::where('category_id', $category->id)
             ->where('is_shorts', true)
-            ->latest()
-            ->paginate(6); // <-- ubah dari get() jadi paginate()
+            ->orderBy('published_at', 'desc')
+            ->paginate(6);
 
         return view($viewName, compact('articles', 'shorts', 'isShortsOnly'));
-    }
-
-    public function loadMore(Request $request)
-    {
-        $excludeIds = $request->input('exclude_ids', []);
-
-        $articles = Article::where('is_topic', true)
-            ->whereNotIn('id', $excludeIds)
-            ->latest()
-            ->paginate(4);
-
-        return view('partials.article-cards', compact('articles'));
     }
 
 }

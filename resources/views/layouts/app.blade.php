@@ -23,7 +23,7 @@
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center h-full">
                     <a href="/home">
-                        <img class="h-20 w-auto" src="{{ asset('image/hype.png') }}" alt="Logo">
+                        <img class="h-20 w-auto" src="{{ asset('image/hype-id.png') }}" alt="Logo">
                     </a>
                 </div>
 
@@ -136,11 +136,10 @@
     <footer class="bg-[#111] text-white pt-14 pb-8 mt-20">
         <div class="max-w-7xl mx-auto px-4 md:px-8 grid md:grid-cols-2 gap-12">
             <div class="flex items-center gap-4 mb-4">
-                <img src="{{ asset('image/hype.png') }}" class="h-20 w-20" alt="Logo Hypenings">
-                <span class="text-xl font-grotesk font-bold">Hypenings</span>
+                <img src="{{ asset('image/hype-id.png') }}" class="h-40 w-40" alt="Logo Hypenings">
             </div>
 
-            <div class="grid grid-cols-2 gap-6 text-sm">
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-12 text-sm w-full max-w-6xl mx-auto">
                 <div>
                     <h3 class="font-grotesk mb-3">Categories</h3>
                     <ul class="space-y-2 text-gray-400">
@@ -151,9 +150,11 @@
                                     ? route('showTopicByCategory', ['name' => $cat])
                                     : route('category.show', ['name' => $cat]);
                             @endphp
-                            <li><a href="{{ $route }}" class="px-6 py-2 hover:text-yellow-400 text-sm font-poppins">
+                            <li>
+                                <a href="{{ $route }}" class="px-6 py-2 hover:text-yellow-400 text-sm font-poppins">
                                     {{ $label }}
-                            </li></a>
+                                </a>
+                            </li>
                         @endforeach
                     </ul>
                 </div>
@@ -161,18 +162,25 @@
                 <div>
                     <h3 class="font-grotesk mb-3">Company</h3>
                     <ul class="space-y-2 font-poppins text-gray-400">
-                        <li><a href="#" class="hover:text-white">About</a></li>
-                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-white">Terms of Use</a></li>
+                        <li><a href="#" class="hover:text-yellow-400">About</a></li>
+                        <li><a href="#" class="hover:text-yellow-400">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-yellow-400">Terms of Use</a></li>
                     </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-grotesk mb-3">Contact</h3>
 
                     <div class="flex gap-4 mt-4">
-                        <a href="https://www.instagram.com/hypenings/?hl=en" class="text-2xl hover:text-pink-500"><i
-                                class="fab fa-instagram"></i></a>
-                        <a href="https://www.tiktok.com/@hypenings" class="text-2xl hover:text-gray-300"><i
-                                class="fab fa-tiktok"></i></a>
-                        <a href="mailto:contact@hypenings.com" class="text-2xl hover:text-blue-400"><i
-                                class="fas fa-envelope"></i></a>
+                        <a href="https://www.instagram.com/hypenings/?hl=en" class="text-2xl hover:text-pink-500">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.tiktok.com/@hypenings" class="text-2xl hover:text-gray-300">
+                            <i class="fab fa-tiktok"></i>
+                        </a>
+                        <a href="mailto:contact@hypenings.com" class="text-2xl hover:text-blue-400">
+                            <i class="fas fa-envelope"></i>
+                        </a>
                     </div>
                 </div>
             </div>

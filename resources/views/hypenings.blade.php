@@ -24,7 +24,7 @@
                 <!-- Logo -->
                 <div class="flex-shrink-0">
                     <a href="/">
-                        <img class="h-24 w-auto" src="{{ asset('image/hype.png') }}" alt="Logo">
+                        <img class="h-24 w-auto" src="{{ asset('image/hype-id.png') }}" alt="Logo">
                     </a>
                 </div>
 
@@ -101,7 +101,7 @@
         <section id="tren" class="pt-12 pb-16 px-8 md:px-20 lg:px-[10vw]">
             <div
                 class="relative z-10 rounded-2xl shadow-2xl shadow-black/10 p-6 bg-white/10 backdrop-blur-xl border border-white/10 dark:bg-zinc-800/40">
-                <h2 class="text-4xl md:text-5xl text-left mb-16 mt-6 tracking-wide font-bebas text-white">
+                <h2 class="text-4xl md:text-5xl text-left mb-16 mt-6 tracking-wide font-poppins text-white">
                     <span class="inline-block border-b-4 border-violet-200 pb-2">Trending News</span>
                 </h2>
 
@@ -281,10 +281,10 @@
             </div>
         </section>
 
-        <!-- Topik & Shorts -->
+        <!-- Topik  -->
         <section id="topik" class="pb-52">
 
-            <h2 class="text-4xl md:text-5xl text-center mb-16 mt-6 tracking-wide font-bebas text-white">
+            <h2 class="text-4xl md:text-5xl text-center mb-16 mt-6 tracking-wide font-poppins text-white">
                 <span class="inline-block border-b-4 border-violet-200 mt-32 pb-4">Topic</span>
             </h2>
 
@@ -340,8 +340,8 @@
 
                                 <div
                                     class="w-10 h-10 flex items-center justify-center font-bold rounded-full
-                                                                                                                                                                                                                                                                                                                                                                                                               bg-gray-800 text-white transition-all duration-300
-                                                                                                                                                                                                                                                                                                                                                                                                               group-hover:bg-gradient-to-r group-hover:from-yellow-300 group-hover:via-yellow-400 group-hover:to-amber-500 group-hover:text-black">
+                                                                                                                                                                                                                                                                                                                                                                                                                                           bg-gray-800 text-white transition-all duration-300
+                                                                                                                                                                                                                                                                                                                                                                                                                                           group-hover:bg-gradient-to-r group-hover:from-yellow-300 group-hover:via-yellow-400 group-hover:to-amber-500 group-hover:text-black">
                                     {{ $loop->iteration }}
                                 </div>
 
@@ -383,7 +383,7 @@
                     @foreach ($shorts as $short)
                         <a href="{{ route('articles.shortshow', $short->slug) }}"
                             class="group block min-w-[250px] max-w-[250px] h-[460px] snap-start flex-shrink-0 bg-black rounded-xl shadow border border-gray-700 overflow-hidden relative">
-                            <img src="{{ asset('storage/' . $short->image ) }}"
+                            <img src="{{ asset('storage/' . $short->image) }}"
                                 class="w-full h-full object-cover object-center" alt="{{ $short->title }}">
                             <div
                                 class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -404,31 +404,34 @@
                 </div>
             </div>
         </section>
-        
-        <div id="moreArticlesWrapper" class="mt-10 space-y-8"></div>
 
-        <div id="loadMoreArticles" class="text-center mt-6 opacity-90 transition-opacity duration-500">
-            <button id="loadMoreArticlesButton"
-                class="px-6 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-300 transition">
-                More Articles
-            </button>
-        </div>
+        <!-- More from Topic -->
+        <section id="moreTopicSection" class="pb-16 px-4">
+            <h2 class="text-4xl md:text-4xl text-center mb-16 mt-16 tracking-wide font-poppins text-white">
+                <span class="inline-block border-b-4 border-violet-200 pb-4">More Article</span>
+            </h2>
+            <div id="moreArticlesWrapper" class="space-y-8"></div>
 
+            <div class="text-center mt-16">
+                <button id="loadMoreArticlesButton" data-url="{{ route('topic.loadMore') }}"
+                    class="px-6 py-3 bg-yellow-400 text-white font-semibold rounded-full hover:bg-yellow-300 transition">
+                    Load More
+                </button>
+            </div>
+        </section>
 
-        <div id="shorts-end-marker" class="w-full h-[1px]"></div>
     </main>
 
 
     <footer class="bg-[#111] text-white pt-14 pb-8 mt-24">
         <div class="max-w-7xl mx-auto px-4 md:px-8 grid md:grid-cols-2 gap-12">
             <div class="flex items-center gap-4 mb-4">
-                <img src="{{ asset('image/hype.png') }}" class="h-20 w-20" alt="Logo Hypenings">
-                <span class="text-xl font-grotesk font-bold">Hypenings</span>
+                <img src="{{ asset('image/hype-id.png') }}" class="h-40 w-40" alt="Logo Hypenings">
             </div>
 
-            <div class="grid grid-cols-2 gap-6 text-sm">
+            <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-12 text-sm w-full max-w-6xl mx-auto">
                 <div>
-                    <h3 class="font-grotesk mb-3">Categories</h3>
+                    <h3 class="font-poppins mb-3">Categories</h3>
                     <ul class="space-y-2 text-gray-400">
                         @foreach (['lifestyle', 'music', 'sport', 'knowledge', 'other'] as $cat)
                             @php
@@ -437,23 +440,28 @@
                                     ? route('showTopicByCategory', ['name' => $cat])
                                     : route('category.show', ['name' => $cat]);
                             @endphp
-                            <li><a href="{{ $route }}" class="px-6 py-2 hover:text-yellow-400 text-sm font-poppins">
+                            <li>
+                                <a href="{{ $route }}" class="px-6 py-2 hover:text-yellow-400 text-sm font-poppins">
                                     {{ $label }}
-                            </li></a>
+                                </a>
+                            </li>
                         @endforeach
                     </ul>
                 </div>
 
                 <div>
-                    <h3 class="mb-3 font-grotesk">Company</h3>
+                    <h3 class="mb-3 font-poppins">Company</h3>
                     <ul class="space-y-2 text-gray-400 font-poppins">
-                        <li><a href="#" class="hover:text-white">About</a></li>
-                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
-                        <li><a href="#" class="hover:text-white">Terms of Use</a></li>
+                        <li><a href="#" class="hover:text-yellow-400">About</a></li>
+                        <li><a href="#" class="hover:text-yellow-400">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-yellow-400">Terms of Use</a></li>
                     </ul>
+                </div>
 
+                <div>
+                    <h3 class="mb-3 font-poppins">Contact</h3>
                     <div class="flex gap-4 mt-4">
-                        <a href="https://www.instagram.com/hypenings/?hl=en" class="text-2xl hover:text-pink-500"><i
+                        <a href="https://www.instagram.com/hypenings.id/?hl=en" class="text-2xl hover:text-pink-500"><i
                                 class="fab fa-instagram"></i></a>
                         <a href="https://www.tiktok.com/@hypenings" class="text-2xl hover:text-gray-300"><i
                                 class="fab fa-tiktok"></i></a>
@@ -474,11 +482,7 @@
 
 
 
-    <script src="{{ asset('js/app.js') }}">
-        const shownArticleIds = @json(
-            collect($topArticles)->merge($topicArticles)->pluck('id')
-        );
-        console.log("shownArticleIds awal:", shownArticleIds);    </script>
+    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 
 </html>

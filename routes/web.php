@@ -29,11 +29,11 @@ Route::get('/set-content-type/{type}', function ($type) {
             return redirect()->route('showShorts');
         }
     }
-
     return redirect()->back();
 })->name('setContentType');
 
-Route::get('/articles/load-more', [ArticleController::class, 'loadMore']);
+// web.php
+Route::get('/topic/load-more', [ArticleController::class, 'loadMore'])->name('topic.loadMore');
 
 Route::get('/shorts', [ArticleController::class, 'showShorts'])->name('showShorts');
 

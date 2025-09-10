@@ -4,15 +4,22 @@
     @else
         <div class="flex flex-col items-center gap-10 px-4 md:px-6 lg:px-0">
             @foreach ($posts as $post)
-                <article
-                    class="group w-full max-w-5xl flex flex-col md:flex-row items-stretch overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg bg-white dark:bg-neutral-900 transition hover:scale-[1.015] hover:shadow-xl duration-300">
+                <article class="group w-full max-w-5xl flex flex-col md:flex-row items-stretch overflow-hidden 
+                           border border-gray-200 dark:border-gray-700 shadow-lg 
+                           bg-white dark:bg-neutral-900 
+                           transition hover:scale-[1.015] hover:shadow-xl duration-300 rounded-xl">
 
-                    <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}"
-                        class="w-full md:w-64 h-56 md:h-auto object-cover transition duration-300 group-hover:brightness-95">
+                    {{-- Thumbnail --}}
+                    <a href="{{ route('articles.show', $post->slug) }}" class="w-full md:w-64 flex-shrink-0">
+                        <img src="{{ asset('storage/' . $post->image) }}" alt="{{ $post->title }}"
+                            class="w-full h-56 md:h-80 object-cover transition duration-300 group-hover:brightness-95">
+                    </a>
 
-                    <div class="p-6 flex flex-col justify-between">
+                    {{-- Content --}}
+                    <div class="p-6 flex flex-col justify-between flex-1">
                         <div>
-                            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white group-hover:underline transition">
+                            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white 
+                                       group-hover:underline transition">
                                 {{ $post->title }}
                             </h2>
                             <p class="text-sm text-gray-600 dark:text-gray-300 mt-3 leading-relaxed">
@@ -48,7 +55,7 @@
             @foreach ($paginationElements as $page => $url)
                 <a href="{{ $url }}"
                     class="px-3 py-1.5 rounded-md border text-sm font-semibold transition-all duration-300
-                                                {{ $posts->currentPage() == $page
+                                                        {{ $posts->currentPage() == $page
                     ? 'bg-blue-600 text-white border-blue-600 hover:bg-blue-700'
                     : 'bg-white dark:bg-neutral-800 text-gray-700 dark:text-gray-100 border-gray-300 hover:bg-gray-100 dark:hover:bg-neutral-700' }}">
                     {{ $page }}
